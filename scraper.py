@@ -10,7 +10,7 @@ def scrape_news(url):
         print("Failed to fetch news from {url}")
         return []
 
-    soup = BeautifulSoup(response.content, "html_parser")
+    soup = BeautifulSoup(response.content, "html.parser")
     articles = []
 
     for article in soup.select("article"):
