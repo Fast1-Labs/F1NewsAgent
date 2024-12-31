@@ -5,7 +5,12 @@ from news_agent import get_f1_news
 app = FastAPI()
 
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the F1 News API"}
+
+
 @app.get("/news")
-async def fetch_news():
+def fetch_news():
     news = get_f1_news()
-    return {"status": "success", "data": news}
+    return {"news": news}
