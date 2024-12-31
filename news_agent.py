@@ -8,13 +8,13 @@ def fetch_f1_news():
     try:
         print("Attempting to fetching F1 news...")
         response = openai.chat.completions.create(
-            model="chatgpt-4o-latest",
+            model="gpt-4",
             messages=[
                 {
                     "role": "system",
                     "content": (
                         "You are an expert Formula 1 news reporter. "
-                        "Your task is to provide up-to-date F1 news in JSON format. "
+                        "Your task is to provide up-to-date F1 news."
                         "Each news item should include a title, description, and an image URL "
                         "relevant to the news. The description should summarize the news in 1-2 sentences."
                     ),
@@ -22,12 +22,12 @@ def fetch_f1_news():
                 {
                     "role": "user",
                     "content": (
-                        "Provide 3-5 Formula 1 news highlights in JSON format. "
+                        "Provide 3-10 Formula 1 news highlights. "
                         "Each item should have a title, description, and image URL."
                     ),
                 },
             ],
-            max_tokens=500,
+            max_tokens=300,
         )
         news = response.choices[0].message.content
         print("News fetched successfully!")
