@@ -12,14 +12,22 @@ def fetch_f1_news():
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a sports news reporter specializing in Formula 1.",
+                    "content": (
+                        "You are an expert Formula 1 news reporter. "
+                        "Your task is to provide up-to-date F1 news in JSON format. "
+                        "Each news item should include a title, description, and an image URL "
+                        "relevant to the news. The description should summarize the news in 1-2 sentences."
+                    ),
                 },
                 {
                     "role": "user",
-                    "content": "Provide the latest Formula 1 news highlights for today.",
+                    "content": (
+                        "Provide 3-5 Formula 1 news highlights in JSON format. "
+                        "Each item should have a title, description, and image URL."
+                    ),
                 },
             ],
-            max_tokens=300,
+            max_tokens=500,
         )
         news = response.choices[0].message.content
         print("News fetched successfully!")
@@ -30,12 +38,23 @@ def fetch_f1_news():
 
 
 def default_f1_news():
-    return """
-    1. Max Verstappen clinches another victory at the Abu Dhabi GP.
-    2. Ferrari shows promise with Charles Leclerc leading the charge.
-    3. Mercedes prepares major upgrades for the next F1 season.
-    4. Aston Martin's Fernando Alonso reflects on his remarkable season.
-    """
+    return [
+        {
+            "title": "Max Verstappen Wins Abu Dhabi GP",
+            "description": "Max Verstappen clinches another victory, dominating the 2023 season.",
+            "image": "https://example.com/verstappen.jpg",
+        },
+        {
+            "title": "Ferrari Prepares Major Upgrades",
+            "description": "Ferrari plans to bring significant updates for the next season.",
+            "image": "https://example.com/ferrari.jpg",
+        },
+        {
+            "title": "Lewis Hamilton Extends Mercedes Contract",
+            "description": "Lewis Hamilton signs a new multi-year deal with Mercedes.",
+            "image": "https://example.com/hamilton.jpg",
+        },
+    ]
 
 
 def get_f1_news():
