@@ -1,4 +1,7 @@
-import openai
+import json
+
+import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -6,34 +9,41 @@ load_dotenv()
 
 def fetch_f1_news():
     try:
-        print("Attempting to fetching F1 news...")
-        response = openai.chat.completions.create(
-            model="gpt-4",
-            messages=[
+        print("Fetching F1 news...")
+        url = "https://www.autosport.com/f1/news/"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        articles = []
+        news_items = soup.select("article")
+
+        for item in news_items[:10]:
+            title = (
+                item.find("h2").get_text(strip=True) if item.find("h2") else "No Title"
+            )
+            description = (
+                item.find("p").get_text(strip=True)
+                if item.find("p")
+                else "No Description"
+            )
+            image_url = item.find("img")["src"] if item.find("img") else "No Image URL"
+
+            articles.append(
                 {
-                    "role": "system",
-                    "content": (
-                        "You are an expert Formula 1 news reporter. "
-                        "Your task is to provide up-to-date F1 news."
-                        "Each news item should include a title, description, and an image URL "
-                        "relevant to the news. The description should summarize the news in 1-2 sentences."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        "Provide 3-10 Formula 1 news highlights. "
-                        "Each item should have a title, description, and image URL."
-                    ),
-                },
-            ],
-            max_tokens=300,
-        )
-        news = response.choices[0].message.content
-        print("News fetched successfully!")
-        return news
+                    "title": title,
+                    "description": description,
+                    "image_url": image_url,
+                }
+            )
+
+        print("F1 news fetched successfully!")
+        return articles
+
     except Exception as e:
-        print(f"Error fetching f1 news {e}")
+        print(f"Error fetching F1 news: {e}")
         return default_f1_news()
 
 
@@ -42,24 +52,24 @@ def default_f1_news():
         {
             "title": "Max Verstappen Wins Abu Dhabi GP",
             "description": "Max Verstappen clinches another victory, dominating the 2023 season.",
-            "image": "https://example.com/verstappen.jpg",
+            "image_url": "https://example.com/verstappen.jpg",
         },
         {
             "title": "Ferrari Prepares Major Upgrades",
             "description": "Ferrari plans to bring significant updates for the next season.",
-            "image": "https://example.com/ferrari.jpg",
+            "image_url": "https://example.com/ferrari.jpg",
         },
         {
             "title": "Lewis Hamilton Extends Mercedes Contract",
             "description": "Lewis Hamilton signs a new multi-year deal with Mercedes.",
-            "image": "https://example.com/hamilton.jpg",
+            "image_url": "https://example.com/hamilton.jpg",
         },
     ]
 
 
 def get_f1_news():
     news = fetch_f1_news()
-    return news
+    return json.dumps(news, indent=2)
 
 
 if __name__ == "__main__":
